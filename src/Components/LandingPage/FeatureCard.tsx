@@ -16,7 +16,7 @@ const FeatureCard = ({ feature }: { feature: (typeof APP_FEATURES)[0] }) => {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
-      className="relative  rounded-xl p-px backdrop-blur-lg text-white overflow-hidden shadow-2xl cursor-pointer"
+      className="relative rounded-xl p-px backdrop-blur-lg text-white overflow-hidden shadow-2xl cursor-pointer"
     >
       <div
         className={`pointer-events-none blur-3xl rounded-full bg-linear-to-r ${

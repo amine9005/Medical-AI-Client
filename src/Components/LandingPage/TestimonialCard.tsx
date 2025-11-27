@@ -1,32 +1,9 @@
 import type { TESTIMONIALS } from "@/assets/data";
-// import { useRef, useState, type MouseEvent } from "react";
 
 const TestimonialCard = ({ data }: { data: (typeof TESTIMONIALS)[0] }) => {
-  // const [visible, setVisible] = useState(false);
-  // const [position, setPosition] = useState({ x: 0, y: 0 });
-  // const divRef = useRef<HTMLDivElement>(null);
-
-  // const handleMouseMove = (e: MouseEvent) => {
-  //   const bounds = divRef.current!.getBoundingClientRect();
-  //   setPosition({ x: e.clientX - bounds.left, y: e.clientY - bounds.top });
-  // };
-
   return (
-    <div
-      // ref={divRef}
-      // onMouseMove={handleMouseMove}
-      // onMouseEnter={() => setVisible(true)}
-      // onMouseLeave={() => setVisible(false)}
-      className="relative w-80 h-96 rounded-xl hover:scale-105 hover:shadow-2xl p-0.5 backdrop-blur-lg text-black overflow-hidden shadow-lg cursor-pointer"
-    >
-      {/* {visible && (
-        <div
-        // className="pointer-events-none blur-xl border border-blue-600 size-60 absolute z-0 transition-opacity duration-300"
-        // style={{ top: position.y - 120, left: position.x - 120 }}
-        />
-      )} */}
-
-      <div className="relative z-10  p-6 h-full w-full rounded-[10px] flex flex-col items-center justify-center text-center space-y-2">
+    <div className="relative w-80 h-96  hover:scale-105  backdrop-blur-lg text-black overflow-hidden shadow-lg cursor-pointer p-4 rounded-lg mx-4 min-h-[200px]  hover:shadow-lg transition-all duration-200 shrink-0">
+      <div className="relative z-10  p-6 h-full w-full rounded-[10px] flex flex-col items-center justify-center text-center space-y-2 ">
         <img
           src={data.img}
           alt="Profile Avatar"
@@ -48,7 +25,9 @@ const TestimonialCard = ({ data }: { data: (typeof TESTIMONIALS)[0] }) => {
             ))}
         </div>
 
-        <p className="text-md text-gray-700 mb-4 px-4">{data.review}</p>
+        <p className="text-md text-gray-700 mb-4 px-4 overflow-hidden">
+          {data.review}
+        </p>
       </div>
     </div>
   );

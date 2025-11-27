@@ -67,4 +67,12 @@ export const TESTIMONIALS = [
     review:
       "I was amazed by how accurate and helpful the AI-powered medical consultation platform was. It's a game-changer for people who want quick and reliable medical advice!",
   },
+  {
+    id: 4,
+    img: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&auto=format&fit=crop&q=60",
+    name: "Jordan Lee",
+    rating: 4,
+    review:
+      "Using AI for health advice is the future no waiting lists no hassle just quick and easy consolation",
+  },
 ];

@@ -1,62 +1,107 @@
+import { HeartPlusIcon } from "lucide-react";
+import { motion, type Variants } from "motion/react";
+
 const Hero = () => {
+  const popup_variant = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ease: "easeInOut",
+        duration: 0.5,
+      },
+    },
+  };
+
+  const FadeIn_variant = {
+    hidden: { width: 0 },
+    visible: {
+      width: "100%",
+      transition: {
+        ease: "easeInOut",
+        duration: 1.5,
+      },
+    },
+  };
+
+  const FadeIn_variant_2: Variants = {
+    hidden: { width: 0 },
+    visible: {
+      width: "100%",
+      transition: {
+        ease: "easeInOut",
+        duration: 1.5,
+        delay: 1.4,
+      },
+    },
+  };
+
+  const FadeIn_variant_3: Variants = {
+    hidden: { width: 0 },
+    visible: {
+      width: "100%",
+      transition: {
+        ease: "easeInOut",
+        duration: 1.5,
+        delay: 2.9,
+      },
+    },
+  };
+
   return (
-    <section className="min-h-screen   flex flex-col max-md:gap-20 md:flex-row pb-20 items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32">
-      <div className="flex flex-col items-center md:items-start">
-        <div className="flex flex-wrap items-center justify-center p-1.5 rounded-full border border-slate-400 text-gray-500 text-xs">
-          <div className="flex items-center">
-            <img
-              className="size-7 rounded-full border-3 border-white"
-              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=50"
-              alt="userImage1"
-            />
-            <img
-              className="size-7 rounded-full border-3 border-white -translate-x-2"
-              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=50"
-              alt="userImage2"
-            />
-            <img
-              className="size-7 rounded-full border-3 border-white -translate-x-4"
-              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=50&h=50&auto=format&fit=crop"
-              alt="userImage3"
-            />
-          </div>
-          <p className="-translate-x-2">Join community of 1m+ founders </p>
+    <section className="min-h-screen flex flex-wrap justify-between  items-center px-4 md:px-16 xl:px-24 2xl:px-32">
+      <div className="flex flex-col max-xl:mt-10 max-xl:mx-auto items-center xl:items-start xl:justify-start">
+        <div className="text-center xl:text-left text-4xl leading-[50px] md:text-6xl md:leading-[84px] font-medium max-w-xl text-slate-900">
+          <motion.h4
+            variants={FadeIn_variant as Variants}
+            initial={"hidden"}
+            whileInView={"visible"}
+            viewport={{ amount: 0.8 }}
+            className="bg-linear-to-r text-transparent bg-clip-text from-blue-700  to-blue-400 overflow-hidden text-nowrap"
+          >
+            Medical AI Agents{" "}
+          </motion.h4>{" "}
+          <motion.p
+            variants={FadeIn_variant_2 as Variants}
+            initial={"hidden"}
+            whileInView={"visible"}
+            viewport={{ amount: 0.8 }}
+            className="overflow-x-hidden text-nowrap"
+          >
+            to Help With Your
+          </motion.p>
+          <motion.p
+            variants={FadeIn_variant_3 as Variants}
+            initial={"hidden"}
+            whileInView={"visible"}
+            viewport={{ amount: 0.8 }}
+            className="overflow-x-hidden text-nowrap"
+          >
+            Medical Needs.
+          </motion.p>
         </div>
-        <h1 className="text-center md:text-left text-5xl leading-[68px] md:text-6xl md:leading-[84px] font-medium max-w-xl text-slate-900">
-          Intelligent AI tools built to help.
-        </h1>
-        <p className="text-center md:text-left text-sm text-slate-700 max-w-lg mt-2">
-          Unlock smarter workflows with AI tools designed to boost productivity,
-          simplify tasks and help you do more with less effort.
+        <p className="text-center xl:text-left text-sm text-slate-700 max-w-xs md:max-w-lg mt-2">
+          We provide you with AI medical consolations via voice chat, create a
+          consolations and start talking with the best AI medical agents
         </p>
         <div className="flex items-center gap-4 mt-8 text-sm">
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95 rounded-md px-7 h-11">
+          <motion.button
+            variants={popup_variant as Variants}
+            initial={"hidden"}
+            whileInView="visible"
+            viewport={{ amount: 0.8 }}
+            className="btn btn-primary md:btn-lg px-12 md:px-24 rounded-2xl hover:scale-105 active:scale-95 transition-all duration-300 hover:bg-linear-to-r hover:from-indigo-500 hover:to-indigo-400 bg-linear-to-r from-indigo-600 to-indigo-400 gap-4"
+          >
+            <HeartPlusIcon className="size-8 text-white" />
             Get started
-          </button>
-          <button className="flex items-center gap-2 border border-slate-600 active:scale-95 hover:bg-white/10 transition text-slate-600 rounded-md px-6 h-11">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="lucide lucide-video-icon lucide-video"
-            >
-              <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5" />
-              <rect x="2" y="6" width="14" height="12" rx="2" />
-            </svg>
-            <span>Watch demo</span>
-          </button>
+          </motion.button>
         </div>
       </div>
       <img
-        src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/hero-section-showcase-4.png"
+        src="/doctor1.png"
         alt="hero"
-        className="max-w-xs sm:max-w-sm lg:max-w-md transition-all duration-300"
+        className=" w-full rounded-2xl max-xl:mt-8 xl:max-w-md transition-all duration-300"
       />
     </section>
   );

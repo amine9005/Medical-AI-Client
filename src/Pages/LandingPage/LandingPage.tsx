@@ -7,8 +7,9 @@ const LandingPage = () => {
   return (
     <>
       <Hero />
-      <Features />
       <Testimonials />
+
+      <Features />
       <Footer />
     </>
   );
