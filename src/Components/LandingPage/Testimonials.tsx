@@ -19,8 +19,8 @@ const Testimonials = () => {
           }}
           className="flex shrink-0"
         >
-          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial) => (
-            <TestimonialCard key={testimonial.id} data={testimonial} />
+          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial, index) => (
+            <TestimonialCard key={index} data={testimonial} />
           ))}
         </motion.div>
         <motion.div
@@ -34,8 +34,8 @@ const Testimonials = () => {
           }}
           className="flex shrink-0"
         >
-          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial) => (
-            <TestimonialCard key={testimonial.id} data={testimonial} />
+          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial, index) => (
+            <TestimonialCard key={index} data={testimonial} />
           ))}
         </motion.div>
       </div>
@@ -52,8 +52,8 @@ const Testimonials = () => {
           }}
           className="flex shrink-0"
         >
-          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial) => (
-            <TestimonialCard key={testimonial.id} data={testimonial} />
+          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial, index) => (
+            <TestimonialCard key={index} data={testimonial} />
           ))}
         </motion.div>
         <motion.div
@@ -67,8 +67,8 @@ const Testimonials = () => {
           }}
           className="flex shrink-0"
         >
-          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial) => (
-            <TestimonialCard key={testimonial.id} data={testimonial} />
+          {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial, index) => (
+            <TestimonialCard key={index} data={testimonial} />
           ))}
         </motion.div>
       </div>

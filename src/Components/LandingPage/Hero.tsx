@@ -1,8 +1,10 @@
 import { HeartPlusIcon } from "lucide-react";
 import { motion, type Variants } from "motion/react";
+import HeroCarousel from "./HeroCarousel";
 
 const Hero = () => {
-  const popup_variant = {
+  // Animations Section
+  const popup_variant: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -10,11 +12,25 @@ const Hero = () => {
       transition: {
         ease: "easeInOut",
         duration: 0.5,
+        delay: 4,
       },
     },
   };
 
-  const FadeIn_variant = {
+  const image_variant: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ease: "easeInOut",
+        duration: 1,
+        delay: 5,
+      },
+    },
+  };
+
+  const fade_in_variant: Variants = {
     hidden: { width: 0 },
     visible: {
       width: "100%",
@@ -25,66 +41,69 @@ const Hero = () => {
     },
   };
 
-  const FadeIn_variant_2: Variants = {
-    hidden: { width: 0 },
+  const container_variant: Variants = {
+    hidden: { opacity: 1 },
     visible: {
-      width: "100%",
+      opacity: 1,
       transition: {
-        ease: "easeInOut",
-        duration: 1.5,
-        delay: 1.4,
+        delayChildren: 0,
+        staggerChildren: 1.2,
       },
     },
   };
 
-  const FadeIn_variant_3: Variants = {
-    hidden: { width: 0 },
+  const text_delay_variant: Variants = {
+    hidden: { opacity: 0, y: 20 },
     visible: {
-      width: "100%",
+      opacity: 1,
+      y: 0,
       transition: {
         ease: "easeInOut",
-        duration: 1.5,
-        delay: 2.9,
+        duration: 0.5,
+        delay: 3.6,
       },
     },
   };
-
+  // Animations Section End
   return (
     <section className="min-h-screen flex flex-wrap justify-between  items-center px-4 md:px-16 xl:px-24 2xl:px-32">
       <div className="flex flex-col max-xl:mt-10 max-xl:mx-auto items-center xl:items-start xl:justify-start">
-        <div className="text-center xl:text-left text-4xl leading-[50px] md:text-6xl md:leading-[84px] font-medium max-w-xl text-slate-900">
+        <motion.div
+          variants={container_variant}
+          initial={"hidden"}
+          whileInView={"visible"}
+          viewport={{ amount: 0.2 }}
+          className="text-center xl:text-left text-4xl leading-[50px] md:text-6xl md:leading-[84px] font-medium max-w-xl text-slate-900"
+        >
           <motion.h4
-            variants={FadeIn_variant as Variants}
-            initial={"hidden"}
-            whileInView={"visible"}
-            viewport={{ amount: 0.8 }}
+            variants={fade_in_variant}
             className="bg-linear-to-r text-transparent bg-clip-text from-blue-700  to-blue-400 overflow-hidden text-nowrap"
           >
             Medical AI Agents{" "}
           </motion.h4>{" "}
           <motion.p
-            variants={FadeIn_variant_2 as Variants}
-            initial={"hidden"}
-            whileInView={"visible"}
-            viewport={{ amount: 0.8 }}
+            variants={fade_in_variant}
             className="overflow-x-hidden text-nowrap"
           >
             to Help With Your
           </motion.p>
           <motion.p
-            variants={FadeIn_variant_3 as Variants}
-            initial={"hidden"}
-            whileInView={"visible"}
-            viewport={{ amount: 0.8 }}
+            variants={fade_in_variant}
             className="overflow-x-hidden text-nowrap"
           >
             Medical Needs.
           </motion.p>
-        </div>
-        <p className="text-center xl:text-left text-sm text-slate-700 max-w-xs md:max-w-lg mt-2">
+        </motion.div>
+        <motion.p
+          variants={text_delay_variant}
+          initial={"hidden"}
+          whileInView="visible"
+          viewport={{ amount: 0.8 }}
+          className="text-center xl:text-left text-sm text-slate-700 max-w-xs md:max-w-lg mt-2"
+        >
           We provide you with AI medical consolations via voice chat, create a
           consolations and start talking with the best AI medical agents
-        </p>
+        </motion.p>
         <div className="flex items-center gap-4 mt-8 text-sm">
           <motion.button
             variants={popup_variant as Variants}
@@ -98,11 +117,19 @@ const Hero = () => {
           </motion.button>
         </div>
       </div>
-      <img
-        src="/doctor1.png"
-        alt="hero"
+      <motion.div
+        variants={image_variant}
+        initial={"hidden"}
+        whileInView="visible"
+        viewport={{ amount: 0.4 }}
+      >
+        <HeroCarousel />
+      </motion.div>
+      {/* <img
+        src={Doctor1}
+        alt="doctor image"
         className=" w-full rounded-2xl max-xl:mt-8 xl:max-w-md transition-all duration-300"
-      />
+      /> */}
     </section>
   );
 };
