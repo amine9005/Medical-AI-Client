@@ -65,7 +65,7 @@ const Features = () => {
         variants={container_variant}
         initial="hidden"
         whileInView="visible"
-        viewport={{ amount: 0.7 }}
+        viewport={{ amount: 0.2 }}
         className="flex items-center justify-center flex-wrap gap-8 mt-20 px-4 md:px-0"
       >
         {APP_FEATURES.map((feature) => (

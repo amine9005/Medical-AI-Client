@@ -1,11 +1,22 @@
 import { TESTIMONIALS } from "@/assets/data";
 import TestimonialCard from "./TestimonialCard";
 import { motion } from "motion/react";
+import { Text_fade_in_variant } from "@/assets/Animations";
 
 const Testimonials = () => {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8  min-h-screen overflow-x-hidden">
-      <h2 className="text-4xl font-bold text-gray-900 mb-8">Testimonials</h2>
+      <div className="">
+        <motion.h2
+          variants={Text_fade_in_variant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ amount: 0.7 }}
+          className="text-nowrap overflow-hidden text-4xl font-bold text-gray-900 mb-8"
+        >
+          Testimonials
+        </motion.h2>
+      </div>
       {/* Upper Marquee */}
       <div className="flex">
         <motion.div

@@ -1,6 +1,9 @@
 import { Route, Routes } from "react-router";
 import Navbar from "./Components/Navbar/Navbar";
 import LandingPage from "./Pages/LandingPage/LandingPage";
+import ProtectRoute from "./Components/Auth/ProtectRoute";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import MedicalAgent from "./Pages/MedicalAgent/MedicalAgent";
 
 function App() {
   return (
@@ -13,6 +16,13 @@ function App() {
           {/* Page content here */}
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route element={<ProtectRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route
+                path="/medical-agent/:sessionId"
+                element={<MedicalAgent />}
+              />
+            </Route>
           </Routes>
         </div>
         <div className="drawer-side">

@@ -66,7 +66,10 @@ const Hero = () => {
   };
   // Animations Section End
   return (
-    <section className="min-h-screen flex flex-wrap justify-between  items-center px-4 md:px-16 xl:px-24 2xl:px-32">
+    <motion.section
+      viewport={{ amount: 0.1 }}
+      className="min-h-screen flex flex-wrap justify-between  items-center px-4 md:px-16 xl:px-24 2xl:px-32"
+    >
       <div className="flex flex-col max-xl:mt-10 max-xl:mx-auto items-center xl:items-start xl:justify-start">
         <motion.div
           variants={container_variant}
@@ -98,7 +101,7 @@ const Hero = () => {
           variants={text_delay_variant}
           initial={"hidden"}
           whileInView="visible"
-          viewport={{ amount: 0.8 }}
+          viewport={{ amount: 0.2 }}
           className="text-center xl:text-left text-sm text-slate-700 max-w-xs md:max-w-lg mt-2"
         >
           We provide you with AI medical consolations via voice chat, create a
@@ -109,11 +112,11 @@ const Hero = () => {
             variants={popup_variant as Variants}
             initial={"hidden"}
             whileInView="visible"
-            viewport={{ amount: 0.8 }}
+            viewport={{ amount: 0.2 }}
             className="btn btn-primary md:btn-lg px-12 md:px-24 rounded-2xl hover:scale-105 active:scale-95 transition-all duration-300 hover:bg-linear-to-r hover:from-indigo-500 hover:to-indigo-400 bg-linear-to-r from-indigo-600 to-indigo-400 gap-4"
           >
             <HeartPlusIcon className="size-8 text-white" />
-            Get started
+            Get Started
           </motion.button>
         </div>
       </div>
@@ -121,7 +124,7 @@ const Hero = () => {
         variants={image_variant}
         initial={"hidden"}
         whileInView="visible"
-        viewport={{ amount: 0.4 }}
+        viewport={{ amount: 0.2 }}
       >
         <HeroCarousel />
       </motion.div>
@@ -130,7 +133,7 @@ const Hero = () => {
         alt="doctor image"
         className=" w-full rounded-2xl max-xl:mt-8 xl:max-w-md transition-all duration-300"
       /> */}
-    </section>
+    </motion.section>
   );
 };
 
