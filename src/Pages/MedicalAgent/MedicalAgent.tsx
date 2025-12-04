@@ -33,6 +33,7 @@ const MedicalAgent = () => {
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [reportSaved, setReportSaved] = useState(true);
+  // const [credits, setCredits] = useState(0);
 
   const { getToken } = useAuth();
 
@@ -62,6 +63,26 @@ const MedicalAgent = () => {
       provider: "google",
     },
   };
+
+  // useEffect(() => {
+  //   const getCredits = async () => {
+  //     const { success, message, credits } = (
+  //       await api.get(PATHS.GET_CREDITS, {
+  //         headers: {
+  //           Authorization: `Bearer ${await getToken()}`,
+  //         },
+  //       })
+  //     ).data;
+
+  //     if (success) {
+  //       console.log(credits);
+  //       setCredits(credits);
+  //     } else {
+  //       toast.error(message);
+  //     }
+  //   };
+  //   getCredits();
+  // }, [getToken]);
 
   useEffect(() => {
     const getData = async () => {
@@ -93,6 +114,23 @@ const MedicalAgent = () => {
     getData();
   }, [getToken, sessionId]);
 
+  // const updateCredits = async () => {
+  //   try {
+  //     const { success, message, credits } = (
+  //       await api.get(PATHS.GET_CREDITS, {
+  //         headers: {
+  //           Authorization: `Bearer ${await getToken()}`,
+  //         },
+  //       })
+  //     ).data;
+  //     if (success) {
+  //       setCredits(credits);
+  //     } else toast.error(message);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   useEffect(() => {
     let intervalId = 0;
     if (callStarted) {
@@ -109,7 +147,6 @@ const MedicalAgent = () => {
 
       vapiInstance.on("call-start", () => {
         console.log("Call started");
-        setCallStarted(true);
         setButtonLoading(false);
       });
       vapiInstance.on("call-end", () => {
@@ -140,6 +177,7 @@ const MedicalAgent = () => {
 
       vapiInstance.on("speech-start", () => {
         console.log("AI Speech started");
+        setCallStarted(true);
         setCurrentRole("assistant");
       });
       vapiInstance.on("speech-end", () => {
@@ -172,6 +210,7 @@ const MedicalAgent = () => {
       setCallStarted(false);
       setCurrentRole(null);
       generate_report();
+      // updateCredits();
     }
   };
   const minutes = Math.floor((time / 60) % 60);
@@ -214,6 +253,81 @@ const MedicalAgent = () => {
     }
     setButtonLoading(false);
   };
+
+  // useEffect(() => {
+  //   const updateCredits = async () => {
+  //     try {
+  //       const { success, message, credits } = (
+  //         await api.get(PATHS.GET_CREDITS, {
+  //           headers: {
+  //             Authorization: `Bearer ${await getToken()}`,
+  //           },
+  //         })
+  //       ).data;
+  //       if (success) {
+  //         setCredits(credits);
+  //       } else toast.error(message);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+
+  //   const start_counter = async () => {
+  //     if (credits / 5 <= minutes) {
+  //       updateCredits();
+  //       if (vapiInstance) {
+  //         vapiInstance.stop();
+  //         setCallStarted(false);
+  //         setCurrentRole(null);
+  //         try {
+  //           setButtonLoading(true);
+
+  //           const { success, message, data } = (
+  //             await api.post(
+  //               PATHS.CREATE_REPORT,
+  //               {
+  //                 sessionId: sessionId,
+  //                 messages: messages,
+  //                 sessionDetails: sessionDetails,
+  //               },
+  //               {
+  //                 headers: {
+  //                   Authorization: `Bearer ${await getToken()}`,
+  //                 },
+  //               }
+  //             )
+  //           ).data;
+
+  //           // console.log("data: ", data);
+
+  //           if (success) {
+  //             setSessionDetails(data[0]);
+  //             toast.success(message);
+  //             setReportSaved(true);
+  //           } else {
+  //             toast.error("Unable to save report try again");
+  //             setReportSaved(false);
+  //           }
+  //         } catch (error) {
+  //           console.log(error);
+  //           setReportSaved(false);
+  //           toast.error("Unable to save report try again");
+  //         }
+  //         setButtonLoading(false);
+  //       }
+  //     }
+  //   };
+
+  //   start_counter();
+  // }, [
+  //   credits,
+  //   getToken,
+  //   messages,
+  //   minutes,
+  //   sessionDetails,
+  //   sessionId,
+  //   vapiInstance,
+  // ]);
   return (
     <div className="mt-5 px-4 xl:px-12 ">
       <div className="border rounded-3xl p-4 bg-gray-200">

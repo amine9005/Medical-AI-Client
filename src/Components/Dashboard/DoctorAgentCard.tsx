@@ -12,7 +12,8 @@ const DoctorAgentCard = ({ doctorAgent }: props) => {
   const { has, getToken } = useAuth();
   const [credits, setCredits] = useState(0);
 
-  const isPremium = has && has({ plan: "premium" });
+  const isPremium =
+    (has && has({ plan: "silver" })) || (has && has({ plan: "gold" }));
 
   useEffect(() => {
     const getCredits = async () => {
@@ -61,7 +62,7 @@ const DoctorAgentCard = ({ doctorAgent }: props) => {
       <p className="line-clamp-2 mt-1">{doctorAgent.description}</p>
       <button
         disabled={
-          (!isPremium && doctorAgent.subscriptionRequired) || credits < 10
+          (!isPremium && doctorAgent.subscriptionRequired) || credits < 5
         }
         className={`btn w-full mt-1 rounded-lg hover:bg-white hover:text-black active:scale-95 transition-all duration-300 ${
           !isPremium && doctorAgent.subscriptionRequired

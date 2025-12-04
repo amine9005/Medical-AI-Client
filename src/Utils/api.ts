@@ -14,4 +14,5 @@ export const PATHS = {
   GET_SESSION: `${BASE_URL}/session/:id`,
   GET_USER_SESSIONS: `${BASE_URL}/session`,
   GET_CREDITS: `${BASE_URL}/user/credits`,
+  UPDATE_CREDITS: `${BASE_URL}/user/update-credits`,
 };
