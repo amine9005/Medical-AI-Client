@@ -218,11 +218,12 @@ const MedicalAgent = () => {
 
   useEffect(() => {
     const limit_time = async () => {
-      if (minutes === 6) {
+      if (minutes === 5) {
         if (vapiInstance) {
           setTime(0);
           vapiInstance.stop();
           setCurrentRole(null);
+          toast.success("Time limit reached");
 
           try {
             setButtonLoading(true);
