@@ -7,7 +7,7 @@ import {
   SaveIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Vapi from "@vapi-ai/web";
 import type { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 import api, { PATHS } from "@/Utils/api";
@@ -34,7 +34,7 @@ const MedicalAgent = () => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [reportSaved, setReportSaved] = useState(true);
   // const [credits, setCredits] = useState(0);
-
+  const navigate = useNavigate();
   const { getToken } = useAuth();
 
   const apiKey = import.meta.env.VITE_VAPI_API_KEY;
@@ -63,26 +63,6 @@ const MedicalAgent = () => {
       provider: "google",
     },
   };
-
-  // useEffect(() => {
-  //   const getCredits = async () => {
-  //     const { success, message, credits } = (
-  //       await api.get(PATHS.GET_CREDITS, {
-  //         headers: {
-  //           Authorization: `Bearer ${await getToken()}`,
-  //         },
-  //       })
-  //     ).data;
-
-  //     if (success) {
-  //       console.log(credits);
-  //       setCredits(credits);
-  //     } else {
-  //       toast.error(message);
-  //     }
-  //   };
-  //   getCredits();
-  // }, [getToken]);
 
   useEffect(() => {
     const getData = async () => {
@@ -114,23 +94,6 @@ const MedicalAgent = () => {
     getData();
   }, [getToken, sessionId]);
 
-  // const updateCredits = async () => {
-  //   try {
-  //     const { success, message, credits } = (
-  //       await api.get(PATHS.GET_CREDITS, {
-  //         headers: {
-  //           Authorization: `Bearer ${await getToken()}`,
-  //         },
-  //       })
-  //     ).data;
-  //     if (success) {
-  //       setCredits(credits);
-  //     } else toast.error(message);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   useEffect(() => {
     let intervalId = 0;
     if (callStarted) {
@@ -147,12 +110,9 @@ const MedicalAgent = () => {
 
       vapiInstance.on("call-start", () => {
         console.log("Call started");
-        setButtonLoading(false);
       });
       vapiInstance.on("call-end", () => {
         console.log("Call ended");
-        setCallStarted(false);
-        setButtonLoading(false);
       });
       vapiInstance.on("message", (message) => {
         const { role, transcript, transcriptType } = message;
@@ -177,6 +137,7 @@ const MedicalAgent = () => {
 
       vapiInstance.on("speech-start", () => {
         console.log("AI Speech started");
+        setButtonLoading(false);
         setCallStarted(true);
         setCurrentRole("assistant");
       });
@@ -199,18 +160,16 @@ const MedicalAgent = () => {
   const start_Call = async () => {
     if (vapiInstance) {
       vapiInstance.start(vapiAgentConfig);
-      setCallStarted(true);
       setButtonLoading(true);
     }
   };
 
-  const end_Call = () => {
+  const end_Call = async () => {
     if (vapiInstance) {
       vapiInstance.stop();
-      setCallStarted(false);
       setCurrentRole(null);
+      setTime(0);
       generate_report();
-      // updateCredits();
     }
   };
   const minutes = Math.floor((time / 60) % 60);
@@ -219,6 +178,7 @@ const MedicalAgent = () => {
   const generate_report = async () => {
     try {
       setButtonLoading(true);
+      setCallStarted(true);
 
       const { success, message, data } = (
         await api.post(
@@ -242,6 +202,7 @@ const MedicalAgent = () => {
         setSessionDetails(data[0]);
         toast.success(message);
         setReportSaved(true);
+        navigate("/dashboard");
       } else {
         toast.error("Unable to save report try again");
         setReportSaved(false);
@@ -252,82 +213,75 @@ const MedicalAgent = () => {
       toast.error("Unable to save report try again");
     }
     setButtonLoading(false);
+    setCallStarted(false);
   };
 
-  // useEffect(() => {
-  //   const updateCredits = async () => {
-  //     try {
-  //       const { success, message, credits } = (
-  //         await api.get(PATHS.GET_CREDITS, {
-  //           headers: {
-  //             Authorization: `Bearer ${await getToken()}`,
-  //           },
-  //         })
-  //       ).data;
-  //       if (success) {
-  //         setCredits(credits);
-  //       } else toast.error(message);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+  useEffect(() => {
+    const limit_time = async () => {
+      if (minutes === 6) {
+        if (vapiInstance) {
+          setTime(0);
+          vapiInstance.stop();
+          setCurrentRole(null);
 
-  //   const start_counter = async () => {
-  //     if (credits / 5 <= minutes) {
-  //       updateCredits();
-  //       if (vapiInstance) {
-  //         vapiInstance.stop();
-  //         setCallStarted(false);
-  //         setCurrentRole(null);
-  //         try {
-  //           setButtonLoading(true);
+          try {
+            setButtonLoading(true);
+            setCallStarted(true);
 
-  //           const { success, message, data } = (
-  //             await api.post(
-  //               PATHS.CREATE_REPORT,
-  //               {
-  //                 sessionId: sessionId,
-  //                 messages: messages,
-  //                 sessionDetails: sessionDetails,
-  //               },
-  //               {
-  //                 headers: {
-  //                   Authorization: `Bearer ${await getToken()}`,
-  //                 },
-  //               }
-  //             )
-  //           ).data;
+            const { success, message, data } = (
+              await api.post(
+                PATHS.CREATE_REPORT,
+                {
+                  sessionId: sessionId,
+                  messages: messages,
+                  sessionDetails: sessionDetails,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${await getToken()}`,
+                  },
+                }
+              )
+            ).data;
 
-  //           // console.log("data: ", data);
+            // console.log("data: ", data);
 
-  //           if (success) {
-  //             setSessionDetails(data[0]);
-  //             toast.success(message);
-  //             setReportSaved(true);
-  //           } else {
-  //             toast.error("Unable to save report try again");
-  //             setReportSaved(false);
-  //           }
-  //         } catch (error) {
-  //           console.log(error);
-  //           setReportSaved(false);
-  //           toast.error("Unable to save report try again");
-  //         }
-  //         setButtonLoading(false);
-  //       }
-  //     }
-  //   };
+            if (success) {
+              setSessionDetails(data[0]);
+              toast.success(message);
+              setReportSaved(true);
+              navigate("/dashboard");
+            } else {
+              toast.error("Unable to save report try again");
+              setReportSaved(false);
+            }
+          } catch (error) {
+            console.log(error);
+            setReportSaved(false);
+            toast.error("Unable to save report try again");
+          } finally {
+            setButtonLoading(false);
+            setCallStarted(false);
+          }
+        }
+      }
+    };
+    limit_time();
+  }, [
+    getToken,
+    messages,
+    minutes,
+    navigate,
+    sessionDetails,
+    sessionId,
+    vapiInstance,
+  ]);
 
-  //   start_counter();
-  // }, [
-  //   credits,
-  //   getToken,
-  //   messages,
-  //   minutes,
-  //   sessionDetails,
-  //   sessionId,
-  //   vapiInstance,
-  // ]);
+  if (sessionDetails?.report) {
+    navigate("/dashboard");
+    return;
+  }
+
   return (
     <div className="mt-5 px-4 xl:px-12 ">
       <div className="border rounded-3xl p-4 bg-gray-200">

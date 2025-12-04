@@ -30,7 +30,7 @@ const FeatureCard = ({ feature }: { feature: (typeof APP_FEATURES)[0] }) => {
       />
 
       <div
-        className={`flex flex-col min-h-[250px] text-center items-center justify-center rounded-xl p-6 border-2 ${feature.border_color} gap-6 max-w-sm`}
+        className={`flex flex-col min-w-full min-h-[250px] text-center items-center justify-center rounded-xl p-6 border-2 ${feature.border_color} gap-6 max-w-sm`}
       >
         <div className={`p-6 aspect-square rounded-full ${feature.icon_color}`}>
           <feature.icon className="text-white size-8" />

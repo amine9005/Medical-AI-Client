@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="footer sm:footer-horizontal border-t-4 footer-center  text-base-content py-8 p-4  border-blue-600">
+    <footer className="mt-20 footer sm:footer-horizontal border-t-4 footer-center  text-base-content py-8 p-4  border-blue-600">
       <aside>
         <p>
           Copyright © {new Date().getFullYear()} - All right reserved by{" "}

@@ -1,5 +1,5 @@
 import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
-import { ArrowRight, HeartPlusIcon, User2Icon } from "lucide-react";
+import { ArrowRight, HeartPlusIcon, MenuIcon, User2Icon } from "lucide-react";
 import { Link } from "react-router";
 
 const Navbar = () => {
@@ -10,7 +10,7 @@ const Navbar = () => {
     { id: 2, name: "History", link: "/history" },
 
     { id: 3, name: "Pricing", link: "/pricing" },
-    { id: 4, name: "Profile", link: "/profile" },
+    // { id: 4, name: "Profile", link: "/profile" },
   ];
 
   return (
@@ -18,42 +18,31 @@ const Navbar = () => {
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              {" "}
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />{" "}
-            </svg>
+            <MenuIcon className="size-8" />
           </div>
           <ul
             tabIndex={-1}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 shadow"
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box space-y-4 z-1 mt-3 w-52 shadow"
           >
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <a>Item 3</a>
-            </li>
+            {navOptions.map((item) => {
+              return (
+                <li key={item.id}>
+                  <Link
+                    className="hover:text-white text-lg px-8 hover:scale-105 active:scale-95"
+                    to={item.link}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
         <Link
           to={"/"}
-          className="btn px-12 rounded-2xl text-sky-400  bg-white  hover:scale-105 active:scale-95 text-xl"
+          className="flex items-center gap-4 text-2xl transition-all duration-300  hover:text-white hover:scale-105 active:scale-95 "
         >
-          <HeartPlusIcon className="size-7 " />
+          <HeartPlusIcon className="size-8 " />
           Medical.AI
         </Link>
       </div>
@@ -64,7 +53,7 @@ const Navbar = () => {
               return (
                 <li key={item.id}>
                   <Link
-                    className="btn px-8  bg-white hover:bg-white/70 rounded-2xl hover:scale-105 active:scale-95"
+                    className="hover:text-white px-8 hover:scale-105 active:scale-95"
                     to={item.link}
                   >
                     {item.name}

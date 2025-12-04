@@ -1,8 +1,10 @@
 import { HeartPlusIcon } from "lucide-react";
 import { motion, type Variants } from "motion/react";
 import HeroCarousel from "./HeroCarousel";
+import { useNavigate } from "react-router";
 
 const Hero = () => {
+  const navigate = useNavigate();
   // Animations Section
   const popup_variant: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -65,6 +67,10 @@ const Hero = () => {
     },
   };
   // Animations Section End
+
+  const to_dashboard = () => {
+    navigate("/dashboard");
+  };
   return (
     <motion.section
       viewport={{ amount: 0.1 }}
@@ -109,6 +115,7 @@ const Hero = () => {
         </motion.p>
         <div className="flex items-center gap-4 mt-8 text-sm">
           <motion.button
+            onClick={() => to_dashboard()}
             variants={popup_variant as Variants}
             initial={"hidden"}
             whileInView="visible"

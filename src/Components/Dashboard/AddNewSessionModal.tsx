@@ -2,7 +2,7 @@ import api, { PATHS } from "@/Utils/api";
 import type { AIDoctorAgent } from "@/Utils/Types";
 import { useAuth } from "@clerk/clerk-react";
 import { ArrowRight, Loader2, Plus, XIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import SuggestedAgentCard from "./SuggestedAgentCard";
 import { useNavigate } from "react-router";
@@ -16,8 +16,47 @@ const AddNewSessionModal = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedDoctor, setSelectedDoctor] = useState<AIDoctorAgent>();
   const navigate = useNavigate();
+  const { getToken, has } = useAuth();
 
-  const { getToken } = useAuth();
+  const [isAllowed, setIsAllowed] = useState(false);
+
+  const silver = has && has({ plan: "silver" });
+
+  const gold = has && has({ plan: "gold" });
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const { success, message, data } = (
+          await api.get(PATHS.GET_USER_SESSIONS, {
+            headers: {
+              Authorization: `Bearer ${await getToken()}`,
+            },
+          })
+        ).data;
+        console.log(data);
+        console.log(data.length);
+
+        if (success) {
+          if (data.length < 5) {
+            setIsAllowed(true);
+          } else if (gold && data.length < 35) {
+            setIsAllowed(true);
+          } else if (silver && data.length < 20) {
+            setIsAllowed(true);
+          }
+        } else {
+          toast.error(message);
+          console.log(message);
+        }
+      } catch (error) {
+        toast.error("Unable to load sessions");
+        console.log(error);
+      }
+    };
+
+    getData();
+  }, [getToken, gold, silver]);
 
   const get_suggestions = async () => {
     try {
@@ -74,7 +113,10 @@ const AddNewSessionModal = () => {
     <div>
       <button
         onClick={() => openModal()}
-        className="btn bg-black text-white mt-5 rounded-lg px-4 md:px-8 md:py-4 hover:scale-105 active:scale-95 transition-all hover:bg-white hover:text-black font-bold"
+        disabled={!isAllowed}
+        className={`btn  mt-5 rounded-lg px-4 md:px-8 md:py-4 hover:scale-105 active:scale-95 transition-all hover:bg-white hover:text-black font-bold ${
+          !isAllowed ? "bg-gray-200 text-gray-400" : "bg-black text-white"
+        }`}
       >
         <Plus className="size-6 font-bold" />
         <span className="hidden md:block">Start a Consultation</span>

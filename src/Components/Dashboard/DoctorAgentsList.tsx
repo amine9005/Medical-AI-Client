@@ -1,4 +1,3 @@
-import React from "react";
 import { AIDoctorAgents } from "@/assets/list";
 import DoctorAgentCard from "./DoctorAgentCard";
 

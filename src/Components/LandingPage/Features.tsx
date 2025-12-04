@@ -66,7 +66,7 @@ const Features = () => {
         initial="hidden"
         whileInView="visible"
         viewport={{ amount: 0.2 }}
-        className="flex items-center justify-center flex-wrap gap-8 mt-20 px-4 md:px-0"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-20 px-4 md:px-12 lg:px-16"
       >
         {APP_FEATURES.map((feature) => (
           <motion.div key={feature.id} variants={card_variant}>

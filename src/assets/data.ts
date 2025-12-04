@@ -1,7 +1,10 @@
 import {
+  Bot,
   ClipboardClockIcon,
+  ClipboardPlus,
   HatGlassesIcon,
   HeartPlusIcon,
+  Rocket,
 } from "lucide-react";
 
 export const APP_FEATURES = [
@@ -39,6 +42,41 @@ export const APP_FEATURES = [
     bg_from: "from-gray-900",
     bg_via: "via-gary-800",
     bg_to: "to-gary-700",
+  },
+  {
+    id: 4,
+    icon: Bot,
+    title: "Specialized AI Agents",
+    description:
+      "Voice chat with a specialized AI agents for your specific needs. ",
+    border_color: "border-blue-500",
+    icon_color: "bg-blue-500",
+    bg_from: "from-blue-500",
+    bg_via: "via-blue-300",
+    bg_to: "to-blue-50",
+  },
+  {
+    id: 5,
+    icon: ClipboardPlus,
+    title: "Custom Reports",
+    description: "Get a personalized report based on your conversation. ",
+    border_color: "border-yellow-500",
+    icon_color: "bg-yellow-500",
+    bg_from: "from-yellow-300",
+    bg_via: "via-yellow-200",
+    bg_to: "to-yellow-50",
+  },
+
+  {
+    id: 6,
+    icon: Rocket,
+    title: "High-End AI Models",
+    description: "Talk with the latest and greatest AI models. ",
+    border_color: "border-violet-500",
+    icon_color: "bg-violet-500",
+    bg_from: "from-violet-500",
+    bg_via: "via-violet-300",
+    bg_to: "to-violet-50",
   },
 ];
 
