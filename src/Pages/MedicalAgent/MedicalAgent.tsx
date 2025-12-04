@@ -1,19 +1,18 @@
-import { AIDoctorAgents } from "@/assets/list";
 import type { sessionDetails } from "@/Utils/Types";
-import { CircleIcon, PhoneCall, PhoneOffIcon } from "lucide-react";
+import {
+  CircleIcon,
+  Loader2,
+  PhoneCall,
+  PhoneOffIcon,
+  SaveIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Vapi from "@vapi-ai/web";
 import type { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
-
-const dummyData = {
-  id: "123",
-  sessionId: "123",
-  notes: "123",
-  report: { report: "123" },
-  selectedDoctor: AIDoctorAgents[0],
-  createdAt: "123",
-};
+import api, { PATHS } from "@/Utils/api";
+import toast from "react-hot-toast";
+import { useAuth } from "@clerk/clerk-react";
 
 type messagesType = {
   role: string;
@@ -23,7 +22,7 @@ type messagesType = {
 const MedicalAgent = () => {
   const { sessionId } = useParams();
   const [sessionDetails, setSessionDetails] = useState<sessionDetails | null>(
-    dummyData
+    null
   );
   const [time, setTime] = useState(0);
   const [callStarted, setCallStarted] = useState<boolean>(false);
@@ -31,6 +30,11 @@ const MedicalAgent = () => {
   const [liveTranscript, setLiveTranscript] = useState<string | null>("");
   const [messages, setMessages] = useState<messagesType[]>([]);
   const [vapiInstance, setVapiInstance] = useState<Vapi | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [reportSaved, setReportSaved] = useState(true);
+
+  const { getToken } = useAuth();
 
   const apiKey = import.meta.env.VITE_VAPI_API_KEY;
   //   const assistantId = import.meta.env.VITE_VAPI_VOICE_ASSISTANT_ID;
@@ -60,6 +64,45 @@ const MedicalAgent = () => {
   };
 
   useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        const { success, message, data } = (
+          await api.get(
+            `${PATHS.GET_SESSION.replace(":id", sessionId as string)}`,
+            {
+              headers: {
+                Authorization: `Bearer ${await getToken()}`,
+              },
+            }
+          )
+        ).data;
+        // console.log(data);
+
+        if (success) {
+          setSessionDetails(data[0]);
+        } else {
+          toast.error(message);
+          console.log(message);
+        }
+      } catch (error) {
+        console.error("Error fetching session details:", error);
+      }
+      setLoading(false);
+    };
+    getData();
+  }, [getToken, sessionId]);
+
+  useEffect(() => {
+    let intervalId = 0;
+    if (callStarted) {
+      // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
+      intervalId = setInterval(() => setTime(time + 1), 1000);
+    }
+    return () => clearInterval(intervalId);
+  }, [callStarted, time]);
+
+  useEffect(() => {
     const createVapi = () => {
       const vapiInstance = new Vapi(apiKey);
       setVapiInstance(vapiInstance);
@@ -67,10 +110,12 @@ const MedicalAgent = () => {
       vapiInstance.on("call-start", () => {
         console.log("Call started");
         setCallStarted(true);
+        setButtonLoading(false);
       });
       vapiInstance.on("call-end", () => {
         console.log("Call ended");
         setCallStarted(false);
+        setButtonLoading(false);
       });
       vapiInstance.on("message", (message) => {
         const { role, transcript, transcriptType } = message;
@@ -110,18 +155,14 @@ const MedicalAgent = () => {
     };
     createVapi();
 
-    let intervalId = 0;
-    if (callStarted) {
-      // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
-      intervalId = setInterval(() => setTime(time + 1), 1000);
-    }
-    return () => clearInterval(intervalId);
     // Event listeners
-  }, [apiKey, callStarted, time]);
+  }, [apiKey]);
 
   const start_Call = async () => {
     if (vapiInstance) {
       vapiInstance.start(vapiAgentConfig);
+      setCallStarted(true);
+      setButtonLoading(true);
     }
   };
 
@@ -130,9 +171,49 @@ const MedicalAgent = () => {
       vapiInstance.stop();
       setCallStarted(false);
       setCurrentRole(null);
+      generate_report();
     }
   };
-  const minutes = Math.floor((time % 360000) / 6000);
+  const minutes = Math.floor((time / 60) % 60);
+  const seconds = Math.floor(time % 60);
+
+  const generate_report = async () => {
+    try {
+      setButtonLoading(true);
+
+      const { success, message, data } = (
+        await api.post(
+          PATHS.CREATE_REPORT,
+          {
+            sessionId: sessionId,
+            messages: messages,
+            sessionDetails: sessionDetails,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${await getToken()}`,
+            },
+          }
+        )
+      ).data;
+
+      // console.log("data: ", data);
+
+      if (success) {
+        setSessionDetails(data[0]);
+        toast.success(message);
+        setReportSaved(true);
+      } else {
+        toast.error("Unable to save report try again");
+        setReportSaved(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setReportSaved(false);
+      toast.error("Unable to save report try again");
+    }
+    setButtonLoading(false);
+  };
   return (
     <div className="mt-5 px-4 xl:px-12 ">
       <div className="border rounded-3xl p-4 bg-gray-200">
@@ -149,58 +230,115 @@ const MedicalAgent = () => {
           </h2>
           <h2 className="font-bold text-xl text-gray-400">
             {minutes.toString().padStart(2, "0")}:
-            {time.toString().padStart(2, "0")}
+            {seconds.toString().padStart(2, "0")}
           </h2>
         </div>
         {/* Session Details */}
-        <div className="mt-10">
-          {sessionDetails ? (
-            <div className="flex flex-col items-center ">
-              <img
-                src={sessionDetails.selectedDoctor.image}
-                alt={sessionDetails.selectedDoctor.specialist}
-                className="h-[100px] w-[100px] rounded-full"
-              />
-              <h2 className="font-bold text-lg mt-2">
-                {sessionDetails.selectedDoctor.specialist}
-              </h2>
-              <p className="text-sm text-gray-400">AI Medical Voice Agent</p>
+        {loading ? (
+          <div className="flex flex-col justify-center items-center min-h-[500px]">
+            {" "}
+            <Loader2 className="size-10 animate-spin" />
+          </div>
+        ) : (
+          <div className="mt-10">
+            {sessionDetails ? (
+              <div className="flex flex-col items-center ">
+                <img
+                  src={sessionDetails.selectedDoctor.image}
+                  alt={sessionDetails.selectedDoctor.specialist}
+                  className="h-[100px] w-[100px] rounded-full"
+                />
+                <h2 className="font-bold text-lg mt-2">
+                  {sessionDetails.selectedDoctor.specialist}
+                </h2>
+                <p className="text-sm text-gray-400">AI Medical Voice Agent</p>
 
-              <div className="mt-10 max-w-md xl:max-w-4xl overflow-y-auto max-h-[200px] p-2 flex flex-col items-center">
-                {messages?.map((message, index) => (
-                  <p key={index} className="text-gray-600 text-center">
-                    {message.role.toUpperCase()}:{" " + message.text}
-                  </p>
-                ))}
-                {liveTranscript && liveTranscript.length > 0 && (
-                  <p className="text-center">
-                    {currentRole}: {liveTranscript}{" "}
-                  </p>
+                <div className="mt-10 max-w-md xl:max-w-4xl overflow-y-auto max-h-[200px] p-2 flex flex-col items-center">
+                  {messages?.map((message, index) => (
+                    <p key={index} className="text-gray-600 text-center">
+                      {message.role.toUpperCase()}:{" " + message.text}
+                    </p>
+                  ))}
+                  {liveTranscript && liveTranscript.length > 0 && (
+                    <p className="text-center">
+                      {currentRole}: {liveTranscript}{" "}
+                    </p>
+                  )}
+                </div>
+                {reportSaved ? (
+                  <>
+                    {" "}
+                    {!callStarted ? (
+                      <button
+                        disabled={buttonLoading}
+                        onClick={() => start_Call()}
+                        className={`btn mt-10 bg-black text-white rounded-lg hover:bg-white hover:text-black active:scale-95 transition-all duration-300 ${
+                          buttonLoading ? "bg-gray-400" : ""
+                        }`}
+                      >
+                        {!buttonLoading ? (
+                          <>
+                            <PhoneCall /> Start Call
+                          </>
+                        ) : (
+                          <>
+                            <Loader2 className="size-5 animate-spin" />{" "}
+                            Calling...
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => end_Call()}
+                        disabled={buttonLoading}
+                        className={`btn mt-10  text-white rounded-lg hover:bg-red-600 hover:text-black active:scale-95 transition-all duration-300 ${
+                          buttonLoading ? "bg-green-400" : "bg-red-800"
+                        }`}
+                      >
+                        {!buttonLoading ? (
+                          <>
+                            <PhoneOffIcon /> End Call
+                          </>
+                        ) : (
+                          <>
+                            <Loader2 className="size-5 animate-spin" />{" "}
+                            Generating Report...
+                          </>
+                        )}
+                      </button>
+                    )}{" "}
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => generate_report()}
+                      disabled={buttonLoading}
+                      className={`btn mt-10  text-white rounded-lg hover:bg-green-600 hover:text-black active:scale-95 transition-all duration-300 ${
+                        buttonLoading ? "bg-green-400" : "bg-green-800"
+                      }`}
+                    >
+                      {!buttonLoading ? (
+                        <>
+                          <SaveIcon /> Save Report
+                        </>
+                      ) : (
+                        <>
+                          <Loader2 className="size-5 animate-spin" /> Saving...
+                        </>
+                      )}
+                    </button>
+                  </>
                 )}
               </div>
-
-              {!callStarted ? (
-                <button
-                  onClick={() => start_Call()}
-                  className="btn mt-10 bg-black text-white rounded-lg hover:bg-white hover:text-black active:scale-95 transition-all duration-300"
-                >
-                  <PhoneCall /> Start Call
-                </button>
-              ) : (
-                <button
-                  onClick={() => end_Call()}
-                  className="btn mt-10 bg-red-800 text-white rounded-lg hover:bg-red-600 hover:text-black active:scale-95 transition-all duration-300"
-                >
-                  <PhoneOffIcon /> End Call
-                </button>
-              )}
-            </div>
-          ) : (
-            <>
-              <h2 className="font-bold text-2xl">No Session Selected</h2>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <h2 className="font-bold text-2xl">
+                  Failed to load session try again
+                </h2>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

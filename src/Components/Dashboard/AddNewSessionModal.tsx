@@ -1,33 +1,113 @@
-import { ArrowRight, Plus, XIcon } from "lucide-react";
+import api, { PATHS } from "@/Utils/api";
+import type { AIDoctorAgent } from "@/Utils/Types";
+import { useAuth } from "@clerk/clerk-react";
+import { ArrowRight, Loader2, Plus, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
+import toast from "react-hot-toast";
+import SuggestedAgentCard from "./SuggestedAgentCard";
+import { useNavigate } from "react-router";
 
 const AddNewSessionModal = () => {
   const modal = useRef<HTMLDialogElement>(null);
 
   const openModal = () => modal.current?.showModal();
   const [details, setDetails] = useState<string>();
+  const [suggestions, setSuggestions] = useState<AIDoctorAgent[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<AIDoctorAgent>();
+  const navigate = useNavigate();
+
+  const { getToken } = useAuth();
+
+  const get_suggestions = async () => {
+    try {
+      setLoading(true);
+      const { success, message, data } = (
+        await api.post(
+          PATHS.GET_SUGGESTIONS,
+          { prompt: details },
+          {
+            headers: {
+              Authorization: `Bearer ${await getToken()}`,
+            },
+          }
+        )
+      ).data;
+      if (success) {
+        setSuggestions(data);
+      } else {
+        console.log(message);
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
+
+  const start_Consultation = async () => {
+    try {
+      setLoading(true);
+      const { success, message, data } = (
+        await api.post(
+          PATHS.CREATE_SESSION,
+          { notes: details, selectedDoctor },
+          {
+            headers: {
+              Authorization: `Bearer ${await getToken()}`,
+            },
+          }
+        )
+      ).data;
+      if (success) {
+        toast.success(message);
+        navigate(`/medical-agent/${data[0].sessionId}`);
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
   return (
     <div>
       <button
         onClick={() => openModal()}
-        className="btn bg-white text-black mt-5 rounded-xl px-4 md:px-8 hover:scale-105 active:scale-95 transition-all hover:bg-black hover:text-white font-bold"
+        className="btn bg-black text-white mt-5 rounded-lg px-4 md:px-8 md:py-4 hover:scale-105 active:scale-95 transition-all hover:bg-white hover:text-black font-bold"
       >
         <Plus className="size-6 font-bold" />
-        Start a Consultation{" "}
+        <span className="hidden md:block">Start a Consultation</span>
+        <span className="md:hidden"> Add New </span>
       </button>
       <dialog id="my_modal_2" ref={modal} className="modal">
         <div className="modal-box  rounded-2xl">
           <h2 className="font-bold text-lg">Add Basic Details</h2>
-          <div>
-            {" "}
-            <p className="py-4">Add Symptoms or Any Other Details</p>
-            <textarea
-              rows={6}
-              placeholder="Add details here..."
-              className="textarea w-full"
-              onChange={(e) => setDetails(e.target.value)}
-            />
-          </div>
+          {suggestions.length === 0 ? (
+            <>
+              <p className="py-4">Add Symptoms or Any Other Details</p>
+              <textarea
+                rows={9}
+                placeholder="Add details here..."
+                className="textarea w-full"
+                onChange={(e) => setDetails(e.target.value)}
+              />
+            </>
+          ) : (
+            <div className="mt-2">
+              <h2>Select a Doctor Agent</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 mt-4">
+                {suggestions.map((doctor, index) => (
+                  <SuggestedAgentCard
+                    key={index}
+                    doctorAgent={doctor}
+                    setSelectedDoctor={() => setSelectedDoctor(doctor)}
+                    currentSelection={selectedDoctor?.id || -1}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex justify-end items-center mt-4 gap-2">
             <form method="dialog">
               <button className="btn btn-outline px-6 bg-white text-black rounded-lg hover:bg-gray-300 active:scale-95 transition-all duration-300">
@@ -38,14 +118,37 @@ const AddNewSessionModal = () => {
               </button>
             </form>
 
-            <button
-              disabled={!details}
-              className={`btn px-4 ${
-                details ? "bg-black" : "bg-gray-400"
-              }  text-white rounded-lg hover:bg-gray-500 active:scale-95 transition-all duration-300`}
-            >
-              Next <ArrowRight className="size-5" />
-            </button>
+            {suggestions.length > 0 ? (
+              <button
+                disabled={loading || !selectedDoctor}
+                onClick={() => start_Consultation()}
+                className={`btn px-4 ${
+                  loading || !selectedDoctor ? " bg-gray-300" : "bg-black"
+                }  text-white rounded-lg hover:bg-gray-600 active:scale-95 transition-all duration-300`}
+              >
+                Start Consultation{" "}
+                {loading ? (
+                  <Loader2 className="size-5 animate-spin" />
+                ) : (
+                  <ArrowRight className="size-5" />
+                )}
+              </button>
+            ) : (
+              <button
+                disabled={!details || loading}
+                onClick={() => get_suggestions()}
+                className={`btn px-4 ${
+                  loading || !details ? " bg-gray-300" : "bg-black"
+                }  text-white rounded-lg hover:bg-gray-600 active:scale-95 transition-all duration-300`}
+              >
+                Next{" "}
+                {loading ? (
+                  <Loader2 className="size-5 animate-spin" />
+                ) : (
+                  <ArrowRight className="size-5" />
+                )}
+              </button>
+            )}
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">

@@ -8,5 +8,10 @@ export const api = axios.create({
 
 export default api;
 export const PATHS = {
-  REGISTER: `${BASE_URL}/user/register`,
+  CREATE_REPORT: `${BASE_URL}/ai/create-report`,
+  GET_SUGGESTIONS: `${BASE_URL}/ai/suggestions`,
+  CREATE_SESSION: `${BASE_URL}/session/create`,
+  GET_SESSION: `${BASE_URL}/session/:id`,
+  GET_USER_SESSIONS: `${BASE_URL}/session`,
+  GET_CREDITS: `${BASE_URL}/user/credits`,
 };

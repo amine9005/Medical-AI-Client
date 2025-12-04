@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import AddNewSessionModal from "./AddNewSessionModal";
 import api, { PATHS } from "@/Utils/api";
 import toast from "react-hot-toast";
 import { useAuth } from "@clerk/clerk-react";
 import { Loader2 } from "lucide-react";
 import type { sessionDetails } from "@/Utils/Types";
 import moment from "moment";
-import ReportViewModal from "./ReportViewModal";
-import { Link } from "react-router";
+import ReportViewModal from "@/Components/Dashboard/ReportViewModal";
+import AddNewSessionModal from "@/Components/Dashboard/AddNewSessionModal";
 
-const HistoryList = () => {
+const History = () => {
   const [historyList, setHistoryList] = useState<sessionDetails[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +28,7 @@ const HistoryList = () => {
         console.log(data);
 
         if (success) {
-          setHistoryList(data.slice(0, 5));
+          setHistoryList(data);
         } else {
           toast.error(message);
           console.log(message);
@@ -55,7 +54,7 @@ const HistoryList = () => {
   }
 
   return (
-    <div className="mt-10">
+    <div className="mt-10 p-4">
       {historyList.length === 0 ? (
         <div className="flex flex-col justify-center items-center p-7 border-2 border-dashed rounded-2xl">
           <img
@@ -74,10 +73,10 @@ const HistoryList = () => {
               {/* head */}
               <thead>
                 <tr>
-                  <th className="text-md">AI Medical Specialist </th>
-                  <th className="text-md">Description </th>
-                  <th className="text-md">Date</th>
-                  <th className="text-md text-center">Action</th>
+                  <th className="text-lg">AI Medical Specialist </th>
+                  <th className="text-lg">Description </th>
+                  <th className="text-lg">Date</th>
+                  <th className="text-lg text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,16 +89,16 @@ const HistoryList = () => {
                         : ""
                     }`}
                   >
-                    <td className="text-md font-bold">
+                    <td className="text-lg font-bold">
                       {session.selectedDoctor.specialist}
                     </td>
-                    <td className="line-clamp-2 text-md font-bold">
+                    <td className="line-clamp-2 text-lg font-bold">
                       {session.notes}
                     </td>
-                    <td className="text-md font-bold">
+                    <td className="text-lg font-bold">
                       {moment(session.createdOn).fromNow()}
                     </td>
-                    <td className="text-center text-md font-bold">
+                    <td className="text-center text-lg font-bold">
                       <ReportViewModal session={session} />
                     </td>
                   </tr>
@@ -107,20 +106,10 @@ const HistoryList = () => {
               </tbody>
             </table>
           </div>
-          <h2 className="mt-10 font-bold text-md">
-            This is a preview of the latest reports, view all of your reports at{" "}
-            <Link
-              className="link link-hover text-blue-600 text-md"
-              to="/history"
-            >
-              {" "}
-              History
-            </Link>
-          </h2>
         </div>
       )}
     </div>
   );
 };
 
-export default HistoryList;
+export default History;
