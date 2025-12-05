@@ -69,6 +69,9 @@ const History = () => {
       ) : (
         <div className="flex flex-col justify-center items-center w-full ">
           <div className="overflow-x-auto w-full">
+            <h2 className="text-2xl font-bold text-center mb-10">
+              Your Consultation History
+            </h2>
             <table className="table w-full">
               {/* head */}
               <thead>

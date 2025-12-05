@@ -33,6 +33,7 @@ const MedicalAgent = () => {
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [reportSaved, setReportSaved] = useState(true);
+  const [callEnded, setCallEnded] = useState(false);
   // const [credits, setCredits] = useState(0);
   const navigate = useNavigate();
   const { getToken } = useAuth();
@@ -95,13 +96,16 @@ const MedicalAgent = () => {
   }, [getToken, sessionId]);
 
   useEffect(() => {
+    if (!callEnded) {
+      return;
+    }
     let intervalId = 0;
     if (callStarted) {
       // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
       intervalId = setInterval(() => setTime(time + 1), 1000);
     }
     return () => clearInterval(intervalId);
-  }, [callStarted, time]);
+  }, [callStarted, time, callEnded]);
 
   useEffect(() => {
     const createVapi = () => {
@@ -113,6 +117,7 @@ const MedicalAgent = () => {
       });
       vapiInstance.on("call-end", () => {
         console.log("Call ended");
+        setCallStarted(false);
       });
       vapiInstance.on("message", (message) => {
         const { role, transcript, transcriptType } = message;
@@ -179,6 +184,7 @@ const MedicalAgent = () => {
     try {
       setButtonLoading(true);
       setCallStarted(true);
+      setCallEnded(true);
 
       const { success, message, data } = (
         await api.post(
@@ -202,6 +208,7 @@ const MedicalAgent = () => {
         setSessionDetails(data[0]);
         toast.success(message);
         setReportSaved(true);
+
         navigate("/dashboard");
       } else {
         toast.error("Unable to save report try again");
@@ -224,6 +231,7 @@ const MedicalAgent = () => {
           vapiInstance.stop();
           setCurrentRole(null);
           toast.success("Time limit reached");
+          setCallEnded(true);
 
           try {
             setButtonLoading(true);
@@ -290,7 +298,7 @@ const MedicalAgent = () => {
           <h2 className="p-1 px-2 border rounded-md flex gap-2 items-center ">
             <CircleIcon
               className={`size-4 ${
-                callStarted
+                callStarted && !callEnded
                   ? "fill-green-500 text-green-500"
                   : "fill-red-500 text-red-500"
               }`}
@@ -328,12 +336,12 @@ const MedicalAgent = () => {
                       {message.role.toUpperCase()}:{" " + message.text}
                     </p>
                   ))}
-                  {liveTranscript && liveTranscript.length > 0 && (
-                    <p className="text-center">
-                      {currentRole}: {liveTranscript}{" "}
-                    </p>
-                  )}
                 </div>
+                {liveTranscript && liveTranscript.length > 0 && (
+                  <p className="text-center">
+                    {currentRole}: {liveTranscript}{" "}
+                  </p>
+                )}
                 {reportSaved ? (
                   <>
                     {" "}

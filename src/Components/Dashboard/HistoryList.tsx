@@ -26,7 +26,7 @@ const HistoryList = () => {
             },
           })
         ).data;
-        console.log(data);
+        // console.log(data);
 
         if (success) {
           setHistoryList(data.slice(0, 5));

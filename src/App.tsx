@@ -4,14 +4,10 @@ import LandingPage from "./Pages/LandingPage/LandingPage";
 import ProtectRoute from "./Components/Auth/ProtectRoute";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import MedicalAgent from "./Pages/MedicalAgent/MedicalAgent";
-import { useAuth } from "@clerk/clerk-react";
 import History from "./Pages/History/History";
 import Billing from "./Pages/Billing/Billing";
 
 function App() {
-  const { getToken } = useAuth();
-  getToken().then((token) => console.log(token));
-
   return (
     <div className=" min-h-screen bg-linear-to-r from-blue-300  to-blue-100">
       <div className="drawer">

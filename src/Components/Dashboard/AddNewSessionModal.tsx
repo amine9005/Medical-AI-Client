@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import SuggestedAgentCard from "./SuggestedAgentCard";
 import { useNavigate } from "react-router";
+import { AIDoctorAgents } from "@/assets/list";
 
 const AddNewSessionModal = () => {
   const modal = useRef<HTMLDialogElement>(null);
@@ -34,8 +35,8 @@ const AddNewSessionModal = () => {
             },
           })
         ).data;
-        console.log(data);
-        console.log(data.length);
+        // console.log(data);
+        // console.log(data.length);
 
         if (success) {
           if (data.length < 5) {
@@ -46,11 +47,11 @@ const AddNewSessionModal = () => {
             setIsAllowed(true);
           }
         } else {
-          toast.error(message);
+          toast.error("Unable to load consultations");
           console.log(message);
         }
       } catch (error) {
-        toast.error("Unable to load sessions");
+        toast.error("Unable to load sessions try again");
         console.log(error);
       }
     };
@@ -59,6 +60,10 @@ const AddNewSessionModal = () => {
   }, [getToken, gold, silver]);
 
   const get_suggestions = async () => {
+    if (!gold && !silver) {
+      setSuggestions([AIDoctorAgents[0]]);
+      return;
+    }
     try {
       setLoading(true);
       const { success, message, data } = (
@@ -76,7 +81,7 @@ const AddNewSessionModal = () => {
         setSuggestions(data);
       } else {
         console.log(message);
-        toast.error(message);
+        toast.error("Unable to get suggestions try again");
       }
     } catch (error) {
       console.log(error);
