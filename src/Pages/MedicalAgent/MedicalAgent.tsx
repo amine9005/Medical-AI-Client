@@ -118,6 +118,7 @@ const MedicalAgent = () => {
       vapiInstance.on("call-end", () => {
         console.log("Call ended");
         setCallStarted(false);
+        setButtonLoading(false);
       });
       vapiInstance.on("message", (message) => {
         const { role, transcript, transcriptType } = message;
