@@ -81,7 +81,7 @@ const ReportViewModal = ({ session }: props) => {
             <div className="mt-5 text-left">
               <p className="text-md">
                 <span className="text-gray-500">
-                  {session.report?.symptoms.join(", ")}
+                  {session.report?.symptoms?.join(", ")}
                 </span>
               </p>
             </div>

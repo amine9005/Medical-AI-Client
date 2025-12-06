@@ -54,7 +54,7 @@ const History = () => {
   }
 
   return (
-    <div className="mt-10 p-4">
+    <div className="mt-10 p-6 ">
       {historyList.length === 0 ? (
         <div className="flex flex-col justify-center items-center p-7 border-2 border-dashed rounded-2xl">
           <img
@@ -68,46 +68,48 @@ const History = () => {
         </div>
       ) : (
         <div className="flex flex-col justify-center items-center w-full ">
-          <div className="overflow-x-auto w-full">
-            <h2 className="text-2xl font-bold text-center mb-10">
+          <div className="w-full">
+            <h2 className="text-xl font-bold text-center mb-5">
               Your Consultation History
             </h2>
-            <table className="table w-full">
-              {/* head */}
-              <thead>
-                <tr>
-                  <th className="text-lg">AI Medical Specialist </th>
-                  <th className="text-lg">Description </th>
-                  <th className="text-lg">Date</th>
-                  <th className="text-lg text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {historyList.map((session, index) => (
-                  <tr
-                    key={index}
-                    className={`hover:bg-linear-to-r hover:from-blue-400 hover:to-blue-300 ${
-                      index % 2 === 0
-                        ? "bg-linear-to-r from-blue-200 to-blue-50"
-                        : ""
-                    }`}
-                  >
-                    <td className="text-lg font-bold">
-                      {session.selectedDoctor.specialist}
-                    </td>
-                    <td className="line-clamp-2 text-lg font-bold">
-                      {session.notes}
-                    </td>
-                    <td className="text-lg font-bold">
-                      {moment(session.createdOn).fromNow()}
-                    </td>
-                    <td className="text-center text-lg font-bold">
-                      <ReportViewModal session={session} />
-                    </td>
+            <div className="overflow-x-auto ">
+              <table className="table">
+                {/* head */}
+                <thead>
+                  <tr>
+                    <th className="text-lg">AI Medical Specialist </th>
+                    <th className="text-lg">Description </th>
+                    <th className="text-lg">Date</th>
+                    <th className="text-lg text-center">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {historyList.map((session, index) => (
+                    <tr
+                      key={index}
+                      className={`hover:bg-linear-to-r hover:from-blue-400 hover:to-blue-300 ${
+                        index % 2 === 0
+                          ? "bg-linear-to-r from-blue-200 to-blue-50"
+                          : ""
+                      }`}
+                    >
+                      <td className="text-lg font-bold">
+                        {session.selectedDoctor.specialist}
+                      </td>
+                      <td className="line-clamp-2 text-lg font-bold">
+                        {session.notes}
+                      </td>
+                      <td className="text-lg font-bold">
+                        {moment(session.createdOn).fromNow()}
+                      </td>
+                      <td className="text-center text-lg font-bold">
+                        <ReportViewModal session={session} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

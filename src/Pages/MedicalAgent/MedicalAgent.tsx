@@ -50,8 +50,11 @@ const MedicalAgent = () => {
       language: "en",
     },
     voice: {
-      provider: "playht",
+      provider: "11labs",
       voiceId: sessionDetails?.selectedDoctor?.voiceId as string,
+      similarityBoost: 0.75,
+      stability: 0.5,
+      model: "eleven_turbo_v2_5",
     },
     model: {
       model: "gemini-2.5-flash",
@@ -64,6 +67,8 @@ const MedicalAgent = () => {
       provider: "google",
     },
   };
+
+  // console.log(vapiAgentConfig);
 
   useEffect(() => {
     const getData = async () => {
@@ -96,16 +101,13 @@ const MedicalAgent = () => {
   }, [getToken, sessionId]);
 
   useEffect(() => {
-    if (!callEnded) {
-      return;
-    }
     let intervalId = 0;
     if (callStarted) {
       // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
       intervalId = setInterval(() => setTime(time + 1), 1000);
     }
     return () => clearInterval(intervalId);
-  }, [callStarted, time, callEnded]);
+  }, [callStarted, time]);
 
   useEffect(() => {
     const createVapi = () => {
@@ -173,6 +175,7 @@ const MedicalAgent = () => {
   const end_Call = async () => {
     if (vapiInstance) {
       vapiInstance.stop();
+      setVapiInstance(null);
       setCurrentRole(null);
       setTime(0);
       generate_report();
@@ -182,11 +185,10 @@ const MedicalAgent = () => {
   const seconds = Math.floor(time % 60);
 
   const generate_report = async () => {
+    setButtonLoading(true);
+    setCallStarted(false);
+    setCallEnded(true);
     try {
-      setButtonLoading(true);
-      setCallStarted(true);
-      setCallEnded(true);
-
       const { success, message, data } = (
         await api.post(
           PATHS.CREATE_REPORT,
@@ -222,6 +224,7 @@ const MedicalAgent = () => {
     }
     setButtonLoading(false);
     setCallStarted(false);
+    setCallEnded(true);
   };
 
   useEffect(() => {
@@ -231,13 +234,12 @@ const MedicalAgent = () => {
           setTime(0);
           vapiInstance.stop();
           setCurrentRole(null);
+          setVapiInstance(null);
           toast.success("Time limit reached");
           setCallEnded(true);
-
+          setButtonLoading(true);
+          setCallStarted(false);
           try {
-            setButtonLoading(true);
-            setCallStarted(true);
-
             const { success, message, data } = (
               await api.post(
                 PATHS.CREATE_REPORT,
@@ -346,7 +348,7 @@ const MedicalAgent = () => {
                 {reportSaved ? (
                   <>
                     {" "}
-                    {!callStarted ? (
+                    {!callStarted && !callEnded ? (
                       <button
                         disabled={buttonLoading}
                         onClick={() => start_Call()}
@@ -365,24 +367,22 @@ const MedicalAgent = () => {
                           </>
                         )}
                       </button>
+                    ) : callEnded ? (
+                      <button
+                        onClick={() => end_Call()}
+                        disabled={buttonLoading}
+                        className={`btn mt-10  text-white rounded-lg bg-green-400 hover:bg-green-600 hover:text-black active:scale-95 transition-all duration-300 `}
+                      >
+                        <Loader2 className="size-5 animate-spin" /> Generating
+                        Report...
+                      </button>
                     ) : (
                       <button
                         onClick={() => end_Call()}
                         disabled={buttonLoading}
-                        className={`btn mt-10  text-white rounded-lg hover:bg-red-600 hover:text-black active:scale-95 transition-all duration-300 ${
-                          buttonLoading ? "bg-green-400" : "bg-red-800"
-                        }`}
+                        className={`btn mt-10  text-white rounded-lg bg-red-800 hover:bg-red-600 hover:text-black active:scale-95 transition-all duration-300 cursor-pointer`}
                       >
-                        {!buttonLoading ? (
-                          <>
-                            <PhoneOffIcon /> End Call
-                          </>
-                        ) : (
-                          <>
-                            <Loader2 className="size-5 animate-spin" />{" "}
-                            Generating Report...
-                          </>
-                        )}
+                        <PhoneOffIcon /> End Call
                       </button>
                     )}{" "}
                   </>

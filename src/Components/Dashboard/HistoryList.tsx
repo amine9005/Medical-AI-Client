@@ -100,7 +100,17 @@ const HistoryList = () => {
                       {moment(session.createdOn).fromNow()}
                     </td>
                     <td className="text-center text-md font-bold">
-                      <ReportViewModal session={session} />
+                      {session.report ? (
+                        <ReportViewModal session={session} />
+                      ) : (
+                        <Link
+                          to={`/medical-agent/${session.sessionId}`}
+                          className="Link text-lg font-bold text-green-700 hover:text-white"
+                        >
+                          {" "}
+                          Resume Session{" "}
+                        </Link>
+                      )}
                     </td>
                   </tr>
                 ))}
